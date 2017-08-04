@@ -17,7 +17,7 @@ baseURI = '/' + users.name
 # }
 #
 @users.route(baseURI, methods=['POST'])
-async def postUsers(request):
+async def postUser(request):
     body = request.json
 
     if 'first_name' not in body and 'last_name' not in body:
