@@ -12,12 +12,12 @@ messages = Blueprint('messages')
 baseURI = '/' + messages.name
 
 #
-# POST -/users/:user_id/chats/:chat_id
+# POST -/users/:user_id/chats/:chat_id/messages
 # {
 #   message: string
 # }
 #
-@messages.route(userBaseURI + '/<user_id>' + chatBaseURI + '/<chat_id>', methods=['POST'])
+@messages.route(userBaseURI + '/<user_id>' + chatBaseURI + '/<chat_id>' + baseURI, methods=['POST'])
 async def postChat(request, user_id, chat_id):
     user = db.findUserById(user_id)
     chat = db.findChatById(chat_id)
