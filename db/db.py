@@ -1,4 +1,5 @@
 import json
+import datetime
 from pymongo import MongoClient
 from bson import ObjectId
 
@@ -29,6 +30,14 @@ class DB:
     def findChatsByUserId(self, user_id):
         return self.deserialize(list(self.db['chats'].find({ 'user_ids': { '$elemMatch': { '$eq': ObjectId(user_id) } } })))
 
+    # messages
+
+    def insertMessage(self, user_id, chat_id, message):
+        return self.deserialize(self.db['messages'].insert({ 'user_id': ObjectId(user_id), 'chat_id': ObjectId(chat_id), 'message': message, 'timestamp': datetime.datetime.utcnow() }))
+
+    def findMessagesByChatId(self, chat_id):
+        return self.deserialize(list(self.db['messages'].find({ 'chat_id': { '$eq': ObjectId(chat_id) } })))
+
     # Helpers
 
     def deserialize(self, object):
@@ -39,6 +48,8 @@ class JSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, ObjectId):
             return str(o)
+        elif isinstance(o, (datetime.datetime, datetime.date)):
+            return o.isoformat()
         return json.JSONEncoder.default(self, o)
 
 
