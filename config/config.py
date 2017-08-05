@@ -12,4 +12,4 @@ class Config:
         return None
 
     def isDev(self, var):
-        return var != 'testing' or var != 'production'
+        return var != 'testing' and var != 'production'
