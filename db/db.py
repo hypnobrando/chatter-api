@@ -3,9 +3,13 @@ import datetime
 from pymongo import MongoClient
 from bson import ObjectId
 
+from config.config import Config
+
 class DB:
+
     def __init__(self):
-        self.db = MongoClient('mongodb://localhost:27017/')['chatter']
+        self.config = Config()
+        self.db = MongoClient(self.config.dbURI)[self.config.dbName]
 
     # Users
 
