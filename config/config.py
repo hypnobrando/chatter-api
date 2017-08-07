@@ -13,3 +13,9 @@ class Config:
 
     def isDev(self, var):
         return var != 'testing' and var != 'production'
+
+    def isTesting(self):
+        return self.env == 'testing'
+
+    def isProd(self):
+        return self.env == 'production'

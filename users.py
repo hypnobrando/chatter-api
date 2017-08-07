@@ -13,14 +13,15 @@ baseURI = '/' + users.name
 # POST - /users
 # {
 #   first_name: string,
-#   last_name: string
+#   last_name: string,
+#   apn_token: string
 # }
 #
 @users.route(baseURI, methods=['POST'])
 async def postUser(request):
     body = request.json
 
-    if 'first_name' not in body and 'last_name' not in body:
+    if 'first_name' not in body and 'last_name' not in body and 'apn_token' not in body:
         return json_response({ 'error': Response.BadRequest }, status=400)
 
     user_id = db.insertUser(body)

@@ -7,6 +7,7 @@ from db.db import db
 from responses.response import Response
 from users import baseURI as userBaseURI
 from chats import baseURI as chatBaseURI
+from notifications.notify import Notify
 
 messages = Blueprint('messages')
 baseURI = '/' + messages.name
@@ -34,6 +35,11 @@ async def postChat(request, user_id, chat_id):
     messages = db.findMessagesByChatId(chat_id)
     chat = db.findChatById(chat_id)
     users = db.findUsersByIds(chat['user_ids'])
+
+    # Send push notification to users.
+    notify = Notify(chat)
+    allOtherUsers = filter(lambda u : u['_id'] != user['_id'], users)
+    notify.sendMessages(allOtherUsers, body['message'])
 
     return json_response({ 'messages': messages, 'chat': chat, 'users': users }, status=201)
 
