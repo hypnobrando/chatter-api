@@ -7,3 +7,6 @@
 * run the virtualenv `source ven/bin/activate`
 * install dependencies `pip3 install -r requirements.txt`
 * run the server `python3 main.py`
+
+### deploying
+`bash deploy.sh testing | production`
