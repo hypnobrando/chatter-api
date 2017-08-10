@@ -13,6 +13,6 @@ class Notify:
 
     def sendMessages(self, users, message):
         custom = { 'chat_id': self.chat['_id'] }
-        payload = Payload(alert=message, sound="default", badge=1, custom=custom)
+        payload = Payload(alert=message, sound="default", badge=10, custom=custom)
         notifications = [Notification(token=user['apn_token'], payload=payload) for user in users]
         self.client.send_notification_batch(notifications, self.topic)
