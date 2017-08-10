@@ -39,7 +39,7 @@ async def postChat(request, user_id, chat_id):
     # Send push notification to users.
     notify = Notify(chat)
     allOtherUsers = filter(lambda u : u['_id'] != user['_id'], users)
-    notify.sendMessages(allOtherUsers, body['message'])
+    notify.sendMessages(allOtherUsers, 'Encrypted message from ' + user['first_name'] + '.')
 
     return json_response({ 'messages': messages, 'chat': chat, 'users': users }, status=201)
 
