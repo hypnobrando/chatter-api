@@ -1,10 +1,10 @@
 # Use an official Python runtime as a parent image
 FROM python:3.6
 
-# Set the working directory to /app
+# Set the working directory to /
 WORKDIR /
 
-# Copy the current directory contents into the container at /app
+# Copy the current directory contents into the container at /
 ADD . /
 
 # Install any needed packages specified in requirements.txt
