@@ -25,6 +25,9 @@ class DB:
     def removeUserById(self, user_id):
         return self.deserialize(self.db['users'].update({ '_id': ObjectId(user_id)}, { '$set': { 'apn_token': None, 'deleted': True } }))
 
+    def updateUserById(self, user_id, first_name, last_name):
+        return self.deserialize(self.db['users'].update({ '_id': ObjectId(user_id)}, { '$set': { 'first_name': first_name, 'last_name': last_name } }))
+
     # Chats
 
     def findChatById(self, id):
