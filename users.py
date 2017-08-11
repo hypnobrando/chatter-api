@@ -36,3 +36,14 @@ async def getUser(request, id):
     if user == None:
         return json_response({ 'error': Response.NotFoundError }, status=404)
     return json_response({ 'user': user }, status=200)
+
+#
+# DELETE - /users/:id
+#
+@users.route(baseURI + '/<id>', methods=['DELETE'])
+async def deleteUser(request, id):
+    user = db.findUserById(id)
+    if user == None:
+        return json_response({ 'error': Response.NotFoundError }, status=404)
+    db.removeUserById(id)
+    return json_response({ 'success': True }, status=201)

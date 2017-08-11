@@ -22,6 +22,9 @@ class DB:
     def findUsersByIds(self, user_ids):
         return self.deserialize(list(self.db['users'].find({ '_id': { '$in': [ObjectId(user_id) for user_id in user_ids] } })))
 
+    def removeUserById(self, user_id):
+        return self.deserialize(self.db['users'].update({ '_id': ObjectId(user_id)}, { '$set': { 'apn_token': None, 'deleted': True } }))
+
     # Chats
 
     def findChatById(self, id):
