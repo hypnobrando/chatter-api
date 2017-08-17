@@ -43,6 +43,10 @@ class DB:
     def updateChat(self, id, title):
         return self.deserialize(self.db['chats'].update({ '_id': ObjectId(id) }, { '$set': { 'title': title } }))
 
+    def addUsersToChat(self, id, userIds):
+        objectIds = [ObjectId(userId) for userId in userIds]
+        return self.deserialize(self.db['chats'].update({ '_id' : ObjectId(id) }, { '$push' : { 'user_ids' : { '$each' : objectIds } } }))
+
     # messages
 
     def insertMessage(self, user_id, chat_id, message):

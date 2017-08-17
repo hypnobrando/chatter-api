@@ -64,3 +64,28 @@ async def patchChat(request, id, chat_id):
     db.updateChat(chat_id, body['title'])
 
     return json_response({ 'success' : 'chat updated' })
+
+#
+# PATCH - /users/:id/chats/:chat_id/add_users
+# {
+#   user_ids: [string]
+# }
+@chats.route(userBaseURI + '/<id>' + baseURI + '/<chat_id>/add_users', methods=['PATCH'])
+async def patchChat(request, id, chat_id):
+    user = db.findUserById(id)
+    if user == None:
+        return json_response({ 'error': Response.NotFoundError })
+
+    chat = db.findChatById(chat_id)
+    if chat == None:
+        return json_response({ 'error': Response.NotFoundError })
+
+    body = request.json
+
+    if 'user_ids' not in body:
+        return json_response({ 'error': Response.BadRequest }, status=400)
+
+    db.addUsersToChat(chat_id, body['user_ids'])
+    chat = db.findChatById(chat_id)
+
+    return json_response({ 'chat' : chat })
