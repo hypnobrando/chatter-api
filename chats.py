@@ -90,9 +90,10 @@ async def patchChat(request, id, chat_id):
     users = db.findUsersByIds(chat['user_ids'])
     apnTokens = [otherUser['apn_token'] for otherUser in users if otherUser['_id'] != user['_id']]
     custom = { 'chat_id' : chat['_id'], 'type' : 'users_added' }
-    notify.sendMessages(apnTokens, user['first_name'] + ' ' + user['last_name'] + 'added more people to one of your chats.', custom)
+    notify.sendMessages(apnTokens, user['first_name'] + ' ' + user['last_name'] + ' added more people to one of your chats.', custom)
 
     db.addUsersToChat(chat_id, body['user_ids'])
     chat = db.findChatById(chat_id)
+    chat['users'] = db.findUsersByIds(chat['user_ids'])
 
     return json_response({ 'chat' : chat })
