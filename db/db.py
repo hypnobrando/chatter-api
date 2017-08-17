@@ -40,6 +40,9 @@ class DB:
     def findChatsByUserId(self, user_id):
         return self.deserialize(list(self.db['chats'].find({ 'user_ids': { '$elemMatch': { '$eq': ObjectId(user_id) } } })))
 
+    def updateChat(self, id, title):
+        return self.deserialize(self.db['chats'].update({ '_id': ObjectId(id) }, { '$set': { 'title': title } }))
+
     # messages
 
     def insertMessage(self, user_id, chat_id, message):

@@ -38,5 +38,29 @@ async def getUserChats(request, id):
     chats = db.findChatsByUserId(id)
     for chat in chats:
         chat['users'] = db.findUsersByIds(chat['user_ids'])
-        
+
     return json_response({ 'chats' : chats })
+
+#
+# PATCH - /users/:id/chats/:chat_id
+# {
+#   title: string
+# }
+@chats.route(userBaseURI + '/<id>' + baseURI + '/<chat_id>', methods=['PATCH'])
+async def patchChat(request, id, chat_id):
+    user = db.findUserById(id)
+    if user == None:
+        return json_response({ 'error': Response.NotFoundError })
+
+    chat = db.findChatById(chat_id)
+    if chat == None:
+        return json_response({ 'error': Response.NotFoundError })
+
+    body = request.json
+
+    if 'title' not in body:
+        return json_response({ 'error': Response.BadRequest }, status=400)
+
+    db.updateChat(chat_id, body['title'])
+
+    return json_response({ 'success' : 'chat updated' })
