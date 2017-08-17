@@ -6,6 +6,7 @@ from bson import ObjectId
 from db.db import db
 from responses.response import Response
 from users import baseURI as userBaseURI
+from notifications.notify import Notify
 
 chats = Blueprint('chats')
 baseURI = '/' + chats.name
@@ -84,6 +85,12 @@ async def patchChat(request, id, chat_id):
 
     if 'user_ids' not in body:
         return json_response({ 'error': Response.BadRequest }, status=400)
+
+    notify = Notify()
+    users = db.findUsersByIds(chat['user_ids'])
+    apnTokens = [otherUser['apn_token'] for otherUser in users if otherUser['_id'] != user['_id']]
+    custom = { 'chat_id' : chat['_id'], 'type' : 'users_added' }
+    notify.sendMessages(apnTokens, user['first_name'] + ' ' + user['last_name'] + 'added more people to one of your chats.', custom)
 
     db.addUsersToChat(chat_id, body['user_ids'])
     chat = db.findChatById(chat_id)

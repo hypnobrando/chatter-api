@@ -35,11 +35,12 @@ async def postChat(request, user_id, chat_id):
     messages = db.findMessagesByChatId(chat_id)
     chat = db.findChatById(chat_id)
     users = db.findUsersByIds(chat['user_ids'])
+    apnTokens = [otherUser['apn_token'] for otherUser in users if otherUser['_id'] != user['_id']]
 
     # Send push notification to users.
-    notify = Notify(chat)
-    allOtherUsers = filter(lambda u : u['_id'] != user['_id'], users)
-    notify.sendMessages(allOtherUsers, 'Encrypted message from ' + user['first_name'] + '.')
+    notify = Notify()
+    custom = { 'chat_id' : chat['_id'], 'type' : 'new_message' }
+    notify.sendMessages(apnTokens, 'Encrypted message from ' + user['first_name'] + '.', custom)
 
     return json_response({ 'messages': messages, 'chat': chat, 'users': users }, status=201)
 
