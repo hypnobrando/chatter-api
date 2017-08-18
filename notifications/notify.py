@@ -11,6 +11,6 @@ class Notify:
         self.client = APNsClient('certs/sandbox.pem', use_sandbox=useSandbox, use_alternative_port=False)
 
     def sendMessages(self, apnTokens, message, custom):
-        payload = Payload(alert=message, sound="default", badge=1, custom=custom)
+        payload = Payload(alert=message, sound="default", custom=custom, content_available=1)
         notifications = [Notification(token=token, payload=payload) for token in apnTokens if token != None]
         self.client.send_notification_batch(notifications, self.topic)
