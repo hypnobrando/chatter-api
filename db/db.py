@@ -28,6 +28,9 @@ class DB:
     def updateUserById(self, user_id, first_name, last_name):
         return self.deserialize(self.db['users'].update({ '_id': ObjectId(user_id)}, { '$set': { 'first_name': first_name, 'last_name': last_name } }))
 
+    def removeUserFromChat(self, user_id, chat_id):
+        return self.deserialize(self.db['users'].update({ '_id': ObjectId(user_id)}, { '$push': { 'removed_chat_ids': ObjectId(chat_id) } }))
+
     # Chats
 
     def findChatById(self, id):
@@ -38,7 +41,15 @@ class DB:
         return self.deserialize(self.db['chats'].insert({ 'user_ids':  mongo_user_ids }))
 
     def findChatsByUserId(self, user_id):
-        return self.deserialize(list(self.db['chats'].find({ 'user_ids': { '$elemMatch': { '$eq': ObjectId(user_id) } } })))
+        query = {
+            'user_ids': {
+                '$elemMatch': {
+                    '$eq': ObjectId(user_id)
+                }
+            }
+        }
+
+        return self.deserialize(list(self.db['chats'].find(query)))
 
     def updateChat(self, id, title):
         return self.deserialize(self.db['chats'].update({ '_id': ObjectId(id) }, { '$set': { 'title': title } }))
@@ -47,7 +58,7 @@ class DB:
         objectIds = [ObjectId(userId) for userId in userIds]
         return self.deserialize(self.db['chats'].update({ '_id' : ObjectId(id) }, { '$push' : { 'user_ids' : { '$each' : objectIds } } }))
 
-    # messages
+    # Messages
 
     def insertMessage(self, user_id, chat_id, message):
         return self.deserialize(self.db['messages'].insert({ 'user_id': ObjectId(user_id), 'chat_id': ObjectId(chat_id), 'message': message, 'timestamp': datetime.datetime.utcnow() }))

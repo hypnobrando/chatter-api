@@ -35,7 +35,7 @@ async def postChat(request, user_id, chat_id):
     messages = db.findMessagesByChatId(chat_id)
     chat = db.findChatById(chat_id)
     users = db.findUsersByIds(chat['user_ids'])
-    apnTokens = [otherUser['apn_token'] for otherUser in users if otherUser['_id'] != user['_id']]
+    apnTokens = [otherUser['apn_token'] for otherUser in users if otherUser['_id'] != user['_id'] and ('removed_chat_ids' not in otherUser or chat['_id'] not in otherUser['removed_chat_ids'])]
 
     # Send push notification to users.
     notify = Notify()

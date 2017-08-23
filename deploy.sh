@@ -6,6 +6,7 @@ then
   exit
 fi
 
+# aws ecr get-login
 docker build -t chatter:$1 .;
 docker tag chatter:$1 832531170141.dkr.ecr.us-east-2.amazonaws.com/chatter:$1;
 docker push 832531170141.dkr.ecr.us-east-2.amazonaws.com/chatter:$1;

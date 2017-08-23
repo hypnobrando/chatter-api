@@ -37,6 +37,9 @@ async def getUserChats(request, id):
         return json_response({ 'error': Response.NotFoundError })
 
     chats = db.findChatsByUserId(id)
+    if 'removed_chat_ids' in user:
+        chats = [chat for chat in chats if chat['_id'] not in user['removed_chat_ids']]
+
     for chat in chats:
         chat['users'] = db.findUsersByIds(chat['user_ids'])
 
@@ -97,3 +100,21 @@ async def patchChat(request, id, chat_id):
     chat['users'] = db.findUsersByIds(chat['user_ids'])
 
     return json_response({ 'chat' : chat })
+
+
+#
+# DELETE - /users/:id/chats/:chat_id
+#
+@chats.route(userBaseURI + '/<id>' + baseURI + '/<chat_id>', methods=['DELETE'])
+async def deleteChat(request, id, chat_id):
+    user = db.findUserById(id)
+    if user == None:
+        return json_response({ 'error': Response.NotFoundError })
+
+    chat = db.findChatById(chat_id)
+    if chat == None:
+        return json_response({ 'error': Response.NotFoundError })
+
+    db.removeUserFromChat(id, chat_id)
+
+    return json_response({ 'success' : 'user removed from chat' })
