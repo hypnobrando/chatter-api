@@ -27,6 +27,9 @@ class DB:
 
         return self.deserialize(self.db['users'].insert(user))
 
+    def updateUserSessionToken(self, user_id, sessionToken):
+        return self.deserialize(self.db['users'].update({ '_id': ObjectId(user_id)}, { '$set': { 'session_token': sessionToken } }))
+
     def findUsersByIds(self, user_ids):
         return self.deserialize(list(self.db['users'].find({ '_id': { '$in': [ObjectId(user_id) for user_id in user_ids] } }, { 'session_token': 0 })))
 

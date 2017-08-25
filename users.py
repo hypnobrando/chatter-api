@@ -42,6 +42,10 @@ async def getUser(request, id):
     if not Auth.ValidateUser(user, request):
         return json_response({ 'error':  Response.InvalidUser }, status=400)
 
+    newSessionToken = Auth.GenerateSessionToken()
+    db.updateUserSessionToken(id, newSessionToken)
+    user = db.findUserById(id)
+
     return json_response({ 'user': user }, status=200)
 
 #
