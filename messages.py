@@ -8,6 +8,7 @@ from responses.response import Response
 from users import baseURI as userBaseURI
 from chats import baseURI as chatBaseURI
 from notifications.notify import Notify
+from auth.auth import Auth
 
 messages = Blueprint('messages')
 baseURI = '/' + messages.name
@@ -25,6 +26,9 @@ async def postChat(request, user_id, chat_id):
 
     if user == None or chat == None:
         return json_response({ 'error': Response.NotFoundError })
+
+    if not Auth.ValidateUser(user, request):
+        return json_response({ 'error':  Response.InvalidUser }, status=400)
 
     body = request.json
 
@@ -45,14 +49,18 @@ async def postChat(request, user_id, chat_id):
     return json_response({ 'messages': messages, 'chat': chat, 'users': users }, status=201)
 
 #
-# GET -/chats/:chat_id/messages
+# GET -/users/:user_id/chats/:chat_id/messages
 #
-@messages.route(chatBaseURI + '/<chat_id>/messages', methods=['GET'])
+@messages.route(userBaseURI + '/<user_id>' + chatBaseURI + '/<chat_id>/messages', methods=['GET'])
 async def getChatMessages(request, chat_id):
+    user = db.findUserById(user_id)
     chat = db.findChatById(chat_id)
 
-    if chat == None:
+    if user == None or chat == None:
         return json_response({ 'error': Response.NotFoundError })
+
+    if not Auth.ValidateUser(user, request):
+        return json_response({ 'error':  Response.InvalidUser }, status=400)
 
     messages = db.findMessagesByChatId(chat_id)
     chat = db.findChatById(chat_id)

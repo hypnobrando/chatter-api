@@ -17,13 +17,21 @@ class DB:
         return self.deserialize(self.db['users'].find_one({ '_id': ObjectId(id) }))
 
     def insertUser(self, user):
-        return self.deserialize(self.db['users'].insert({ 'first_name': user['first_name'], 'last_name': user['last_name'], 'apn_token': user['apn_token'] }))
+
+        user = {
+            'first_name': user['first_name'],
+            'last_name': user['last_name'],
+            'apn_token': user['apn_token'],
+            'session_token' : user['session_token']
+        }
+
+        return self.deserialize(self.db['users'].insert(user))
 
     def findUsersByIds(self, user_ids):
-        return self.deserialize(list(self.db['users'].find({ '_id': { '$in': [ObjectId(user_id) for user_id in user_ids] } })))
+        return self.deserialize(list(self.db['users'].find({ '_id': { '$in': [ObjectId(user_id) for user_id in user_ids] } }, { 'session_token': 0 })))
 
     def removeUserById(self, user_id):
-        return self.deserialize(self.db['users'].update({ '_id': ObjectId(user_id)}, { '$set': { 'apn_token': None, 'deleted': True } }))
+        return self.deserialize(self.db['users'].update({ '_id': ObjectId(user_id)}, { '$set': { 'apn_token': None, 'deleted': True,'session_token': None } }))
 
     def updateUserById(self, user_id, first_name, last_name):
         return self.deserialize(self.db['users'].update({ '_id': ObjectId(user_id)}, { '$set': { 'first_name': first_name, 'last_name': last_name } }))

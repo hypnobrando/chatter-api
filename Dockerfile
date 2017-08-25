@@ -14,7 +14,7 @@ RUN pip3 install -r requirements.txt
 EXPOSE 80
 
 # Define environment variable
-ENV ENVIRONMENT production
+# ENV ENVIRONMENT production
 
 # Run app.py when the container launches
 CMD ["python3", "main.py"]

@@ -4,6 +4,7 @@ from sanic import Blueprint
 
 from db.db import db
 from responses.response import Response
+from auth.auth import Auth
 
 users = Blueprint('users')
 baseURI = '/' + users.name
@@ -23,8 +24,11 @@ async def postUser(request):
     if 'first_name' not in body and 'last_name' not in body and 'apn_token' not in body:
         return json_response({ 'error': Response.BadRequest }, status=400)
 
+    body['session_token'] = Auth.GenerateSessionToken()
     user_id = db.insertUser(body)
-    return json_response({ 'user': db.findUserById(user_id) }, status=201)
+    user = db.findUserById(user_id)
+
+    return json_response({ 'user': user }, status=201)
 
 #
 # GET - /users/:id
@@ -34,6 +38,10 @@ async def getUser(request, id):
     user = db.findUserById(id)
     if user == None:
         return json_response({ 'error': Response.NotFoundError }, status=404)
+
+    if not Auth.ValidateUser(user, request):
+        return json_response({ 'error':  Response.InvalidUser }, status=400)
+
     return json_response({ 'user': user }, status=200)
 
 #
@@ -44,6 +52,10 @@ async def deleteUser(request, id):
     user = db.findUserById(id)
     if user == None:
         return json_response({ 'error': Response.NotFoundError }, status=404)
+
+    if not Auth.ValidateUser(user, request):
+        return json_response({ 'error':  Response.InvalidUser }, status=400)
+
     db.removeUserById(id)
     return json_response({ 'success': True }, status=201)
 
@@ -59,6 +71,9 @@ async def patchUser(request, id):
     user = db.findUserById(id)
     if user == None:
         return json_response({ 'error': Response.NotFoundError }, status=404)
+
+    if not Auth.ValidateUser(user, request):
+        return json_response({ 'error':  Response.InvalidUser }, status=400)
 
     body = request.json
     if 'first_name' not in body and 'last_name' not in body:

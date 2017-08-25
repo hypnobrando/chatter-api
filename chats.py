@@ -7,18 +7,26 @@ from db.db import db
 from responses.response import Response
 from users import baseURI as userBaseURI
 from notifications.notify import Notify
+from auth.auth import Auth
 
 chats = Blueprint('chats')
 baseURI = '/' + chats.name
 
 #
-# POST - /chats
+# POST - /users/:id/chats
 # {
 #   user_ids: [string]
 # }
 #
-@chats.route(baseURI, methods=['POST'])
-async def postChat(request):
+@chats.route(userBaseURI + '/<id>' + baseURI, methods=['POST'])
+async def postChat(request, id):
+    user = db.findUserById(id)
+    if user == None:
+        return json_response({ 'error': Response.NotFoundError })
+
+    if not Auth.ValidateUser(user, request):
+        return json_response({ 'error':  Response.InvalidUser }, status=400)
+
     body = request.json
 
     if 'user_ids' not in body:
@@ -35,6 +43,9 @@ async def getUserChats(request, id):
     user = db.findUserById(id)
     if user == None:
         return json_response({ 'error': Response.NotFoundError })
+
+    if not Auth.ValidateUser(user, request):
+        return json_response({ 'error':  Response.InvalidUser }, status=400)
 
     chats = db.findChatsByUserId(id)
     if 'removed_chat_ids' in user:
@@ -55,6 +66,9 @@ async def patchChat(request, id, chat_id):
     user = db.findUserById(id)
     if user == None:
         return json_response({ 'error': Response.NotFoundError })
+
+    if not Auth.ValidateUser(user, request):
+        return json_response({ 'error':  Response.InvalidUser }, status=400)
 
     chat = db.findChatById(chat_id)
     if chat == None:
@@ -79,6 +93,9 @@ async def patchChat(request, id, chat_id):
     user = db.findUserById(id)
     if user == None:
         return json_response({ 'error': Response.NotFoundError })
+
+    if not Auth.ValidateUser(user, request):
+        return json_response({ 'error':  Response.InvalidUser }, status=400)
 
     chat = db.findChatById(chat_id)
     if chat == None:
@@ -110,6 +127,9 @@ async def deleteChat(request, id, chat_id):
     user = db.findUserById(id)
     if user == None:
         return json_response({ 'error': Response.NotFoundError })
+
+    if not Auth.ValidateUser(user, request):
+        return json_response({ 'error':  Response.InvalidUser }, status=400)
 
     chat = db.findChatById(chat_id)
     if chat == None:

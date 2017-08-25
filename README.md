@@ -14,4 +14,3 @@
 
 ### todo
 * delete old user when a new user is created with the same apn token
-* use session tokens
