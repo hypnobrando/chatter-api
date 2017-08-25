@@ -11,3 +11,7 @@
 ### deploying
 * clone [ecs-deploy](https://github.com/silinternational/ecs-deploy) into a ~/src folder
 * `bash deploy.sh testing | production`
+
+### todo
+* delete old user when a new user is created with the same apn token
+* use session tokens
