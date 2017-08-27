@@ -11,8 +11,8 @@ async def postChat(request):
     message = body['message']
     token = body['apn_token']
 
-    notify = Notify({ '_id': '1' })
-    notify.sendMessages([{ 'apn_token': token }], message)
+    notify = Notify()
+    notify.sendMessages([token], message, {})
     return json_response({ 'success': True })
 
 @tests.route('/healthcheck', methods=['GET'])

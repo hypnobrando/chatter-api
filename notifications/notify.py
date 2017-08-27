@@ -8,7 +8,8 @@ class Notify:
         self.config = Config()
         self.topic = 'BEPco.chatter'
         useSandbox = not self.config.isProd()
-        self.client = APNsClient('certs/sandbox.pem', use_sandbox=useSandbox, use_alternative_port=False)
+        cert = 'certs/sandbox.pem' if useSandbox else 'certs/prod.pem'
+        self.client = APNsClient('certs/prod.pem', use_sandbox=useSandbox, use_alternative_port=False)
 
     def sendMessages(self, apnTokens, message, custom):
         payload = Payload(alert=message, sound="default", custom=custom, content_available=1)
