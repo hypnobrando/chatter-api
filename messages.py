@@ -52,7 +52,7 @@ async def postChat(request, user_id, chat_id):
 # GET -/users/:user_id/chats/:chat_id/messages
 #
 @messages.route(userBaseURI + '/<user_id>' + chatBaseURI + '/<chat_id>/messages', methods=['GET'])
-async def getChatMessages(request, chat_id):
+async def getChatMessages(request, user_id, chat_id):
     user = db.findUserById(user_id)
     chat = db.findChatById(chat_id)
 
@@ -63,7 +63,6 @@ async def getChatMessages(request, chat_id):
         return json_response({ 'error':  Response.InvalidUser }, status=400)
 
     messages = db.findMessagesByChatId(chat_id)
-    chat = db.findChatById(chat_id)
     users = db.findUsersByIds(chat['user_ids'])
 
     return json_response({ 'messages': messages, 'chat': chat, 'users': users }, status=201)
