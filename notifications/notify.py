@@ -15,3 +15,8 @@ class Notify:
         payload = Payload(alert=message, sound="default", custom=custom, content_available=1)
         notifications = [Notification(token=token, payload=payload) for token in apnTokens if token != None]
         self.client.send_notification_batch(notifications, self.topic)
+
+    def clearNotifications(self, apnToken):
+        payload = Payload(alert=None, badge=0, custom={ 'type': 'clear' })
+        notifications = [Notification(token=apnToken, payload=payload)]
+        self.client.send_notification_batch(notifications, self.topic)
