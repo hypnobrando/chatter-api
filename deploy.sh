@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ $1 != "testing" ] && [ $1 != "production" ] ;
+if [ $1 != "production" ] ;
 then
-  echo env must be testing or production
+  echo env must be production
   exit
 fi
 
