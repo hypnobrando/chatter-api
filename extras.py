@@ -15,8 +15,12 @@ async def postChat(request):
     message = body['message']
     token = body['apn_token']
 
-    notify = Notify()
-    notify.sendMessages([token], message, {})
+    try:
+        notify = Notify()
+        notify.sendMessages([token], message, {})
+    except Exception as e:
+        return json_response({ 'error' : str(e) }, status=500)
+
     return json_response({ 'success': True })
 
 @extras.route('/healthcheck', methods=['GET'])
@@ -34,7 +38,10 @@ async def postChat(request, id):
     if not Auth.ValidateUser(user, request):
         return json_response({ 'error':  Response.InvalidUser }, status=400)
 
-    notify = Notify()
-    notify.clearNotifications(user['apn_token'])
+    try:
+        notify = Notify()
+        notify.clearNotifications(user['apn_token'])
+    except Exception as e:
+        return json_response({ 'error' : str(e) }, status=500)
 
     return json_response({ 'success': True })
