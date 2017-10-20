@@ -1,4 +1,6 @@
-# secure-chat-api
+# chatter-api
+
+### download on [app store](https://itunes.apple.com/us/app/chatter-secure-messenger/id1290342381?mt=8)
 
 ### run locally
 * run a mongo database named `chatter`
